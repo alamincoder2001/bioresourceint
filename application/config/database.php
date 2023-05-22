@@ -8,8 +8,8 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	
-  	'username' => 'bigektuw_a_dmin1',
-  	'password' => 'bPcAG&$#%z0Y',
+  	'username' => 'root',
+  	'password' => '',
   	'database' => 'bigektuw_bioresourceint',
 	
 // 	'username' => 'root',

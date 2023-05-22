@@ -129,8 +129,8 @@
 						<div class="col-sm-5">
 							<form v-on:submit.prevent="addToCart">
 								<div class="form-group">
-									<label class="col-xs-3 control-label no-padding-right"> Product </label>
-									<div class="col-xs-8">
+									<label class="col-xs-4 control-label no-padding-right"> Product </label>
+									<div class="col-xs-7">
 										<v-select v-bind:options="products" v-model="selectedProduct" label="display_text" v-on:input="productOnChange"></v-select>
 									</div>
 									<div class="col-xs-1" style="padding: 0;">
@@ -139,42 +139,41 @@
 								</div>
 
 								<div class="form-group" style="display: none;">
-									<label class="col-xs-3 control-label no-padding-right"> Brand </label>
-									<div class="col-xs-9">
+									<label class="col-xs-4 control-label no-padding-right"> Brand </label>
+									<div class="col-xs-8">
 										<input type="text" id="brand" placeholder="Group" class="form-control" />
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label class="col-xs-3 control-label no-padding-right"> Sale Rate </label>
-									<div class="col-xs-9">
+									<label class="col-xs-4 control-label no-padding-right"> Sale Rate </label>
+									<div class="col-xs-8">
 										<input type="number" id="salesRate" placeholder="Rate" step="0.01" class="form-control" v-model="selectedProduct.Product_SellingPrice" v-on:input="productTotal"/>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-xs-3 control-label no-padding-right"> Quantity </label>
-									<div class="col-xs-9">
+									<label class="col-xs-4 control-label no-padding-right"> Quantity </label>
+									<div class="col-xs-8">
 										<input type="number" step="0.01" id="quantity" placeholder="Qty" class="form-control" ref="quantity" v-model="selectedProduct.quantity" v-on:input="productTotal" autocomplete="off" required/>
 									</div>
 								</div>
 
-								<div class="form-group" style="display:none;">
-									<label class="col-xs-3 control-label no-padding-right"> Discount</label>
-									<div class="col-xs-9">
-										<span>(%)</span>
-										<input type="text" id="productDiscount" placeholder="Discount" class="form-control" style="display: inline-block; width: 90%" />
+								<div class="form-group">
+									<label class="col-xs-4 control-label no-padding-right"> Discount (%)</label>
+									<div class="col-xs-8">
+										<input type="number" step="0.01" min="0" id="productDiscount" @input="productTotal" v-model="selectedProduct.discount" placeholder="Discount" class="form-control" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-xs-3 control-label no-padding-right"> Amount </label>
-									<div class="col-xs-9">
+									<label class="col-xs-4 control-label no-padding-right"> Amount </label>
+									<div class="col-xs-8">
 										<input type="text" id="productTotal" placeholder="Amount" class="form-control" v-model="selectedProduct.total" readonly />
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label class="col-xs-3 control-label no-padding-right"> </label>
-									<div class="col-xs-9">
+									<label class="col-xs-4 control-label no-padding-right"> </label>
+									<div class="col-xs-8">
 										<button type="submit" class="btn btn-default pull-right">Add to Cart</button>
 									</div>
 								</div>
@@ -207,6 +206,7 @@
 							<th style="width:20%;color:#000;">Product Name</th>
 							<th style="width:15%;color:#000;">Category</th>
 							<th style="width:7%;color:#000;">Qty</th>
+							<th style="width:7%;color:#000;">Discount</th>
 							<th style="width:8%;color:#000;">Rate</th>
 							<th style="width:15%;color:#000;">Total Amount</th>
 							<th style="width:10%;color:#000;">Action</th>
@@ -219,22 +219,23 @@
 							<td>{{ product.name }}</td>
 							<td>{{ product.categoryName }}</td>
 							<td>{{ product.quantity }}</td>
+							<td>{{ product.discount }}</td>
 							<td>{{ product.salesRate }}</td>
 							<td>{{ product.total }}</td>
 							<td><a href="" v-on:click.prevent="removeFromCart(sl)"><i class="fa fa-trash"></i></a></td>
 						</tr>
 
 						<tr>
-							<td colspan="8"></td>
+							<td colspan="9"></td>
 						</tr>
 
 						<tr style="font-weight: bold;">
-							<td colspan="5">Note</td>
+							<td colspan="6">Note</td>
 							<td colspan="3">Total</td>
 						</tr>
 
 						<tr>
-							<td colspan="5"><textarea style="width: 100%;font-size:13px;" placeholder="Note" v-model="sales.note"></textarea></td>
+							<td colspan="6"><textarea style="width: 100%;font-size:13px;" placeholder="Note" v-model="sales.note"></textarea></td>
 							<td colspan="3" style="padding-top: 15px;font-size:18px;">{{ sales.total }}</td>
 						</tr>
 					</tbody>
@@ -446,6 +447,7 @@
 					display_text: 'Select Product',
 					Product_Name: '',
 					Unit_Name: '',
+					discount: 0,
 					quantity: 0,
 					Product_Purchase_Rate: '',
 					Product_SellingPrice: 0.00,
@@ -509,7 +511,9 @@
 				})
 			},
 			productTotal(){
-				this.selectedProduct.total = (parseFloat(this.selectedProduct.quantity) * parseFloat(this.selectedProduct.Product_SellingPrice)).toFixed(2);
+				let total = (parseFloat(this.selectedProduct.quantity) * parseFloat(this.selectedProduct.Product_SellingPrice));
+				let discount_amount = (total * parseFloat(this.selectedProduct.discount)) / 100;
+				this.selectedProduct.total = (total - discount_amount).toFixed(2);
 			},
 			onSalesTypeChange(){
 				this.selectedCustomer = {
@@ -574,14 +578,15 @@
 			},
 			addToCart(){
 				let product = {
-					productId : this.selectedProduct.Product_SlNo,
+					productId   : this.selectedProduct.Product_SlNo,
 					productCode : this.selectedProduct.Product_Code,
 					categoryName: this.selectedProduct.ProductCategory_Name,
-					name: this.selectedProduct.Product_Name,
-					salesRate: this.selectedProduct.Product_SellingPrice,
-					vat: this.selectedProduct.vat,
-					quantity: this.selectedProduct.quantity,
-					total: this.selectedProduct.total,
+					name        : this.selectedProduct.Product_Name,
+					salesRate   : this.selectedProduct.Product_SellingPrice,
+					vat         : this.selectedProduct.vat,
+					quantity    : this.selectedProduct.quantity,
+					discount    : this.selectedProduct.discount,
+					total       : this.selectedProduct.total,
 					purchaseRate: this.selectedProduct.Product_Purchase_Rate
 				}
 
@@ -624,6 +629,7 @@
 					display_text: 'Select Product',
 					Product_Name: '',
 					Unit_Name: '',
+					discount: 0,
 					quantity: 0,
 					Product_Purchase_Rate: '',
 					Product_SellingPrice: 0.00,
@@ -757,13 +763,14 @@
 					r.saleDetails.forEach(product => {
 						let cartProduct = {
 							productCode : product.Product_Code,
-							productId: product.Product_IDNo,
+							productId   : product.Product_IDNo,
 							categoryName: product.ProductCategory_Name,
-							name: product.Product_Name,
-							salesRate: product.SaleDetails_Rate,
-							vat: product.SaleDetails_Tax,
-							quantity: product.SaleDetails_TotalQuantity,
-							total: product.SaleDetails_TotalAmount,
+							name        : product.Product_Name,
+							salesRate   : product.SaleDetails_Rate,
+							vat         : product.SaleDetails_Tax,
+							quantity    : product.SaleDetails_TotalQuantity,
+							discount    : product.SaleDetails_Discount,
+							total       : product.SaleDetails_TotalAmount,
 							purchaseRate: product.Purchase_Rate,
 						}
 
