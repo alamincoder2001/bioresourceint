@@ -443,23 +443,23 @@
 				oldPreviousDue: 0,
 				products: [],
 				selectedProduct: {
-					Product_SlNo: '',
-					display_text: 'Select Product',
-					Product_Name: '',
-					Unit_Name: '',
-					discount: 0,
-					quantity: 0,
+					Product_SlNo         : '',
+					display_text         : 'Select Product',
+					Product_Name         : '',
+					Unit_Name            : '',
+					discount             : 0,
+					quantity             : 0,
 					Product_Purchase_Rate: '',
-					Product_SellingPrice: 0.00,
-					vat: 0.00,
-					total: 0.00
+					Product_SellingPrice : 0.00,
+					vat                  : 0.00,
+					total                : 0.00
 				},
 				productPurchaseRate: '',
-				productStockText: '',
-				productStock: '',
-				saleOnProgress: false,
-				sales_due_on_update : 0,
-				userType: '<?php echo $this->session->userdata("accountType");?>'
+				productStockText   : '',
+				productStock       : '',
+				saleOnProgress     : false,
+				sales_due_on_update: 0,
+				userType           : '<?php echo $this->session->userdata("accountType");?>'
 			}
 		},
 		async created(){

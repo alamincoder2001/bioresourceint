@@ -38,19 +38,20 @@ class Quotation extends CI_Controller {
             }
 
             $quotation = array(
-                'SaleMaster_InvoiceNo' => $invoice,
-                'SaleMaster_SaleDate' => $data->quotation->quotationDate,
-                'SaleMaster_customer_name' => $data->quotation->customerName,
-                'SaleMaster_customer_mobile' => $data->quotation->customerMobile,
-                'SaleMaster_customer_address' => $data->quotation->customerAddress,
-                'SaleMaster_TotalSaleAmount' => $data->quotation->total,
+                'SaleMaster_InvoiceNo'           => $invoice,
+                'SaleMaster_SaleDate'            => $data->quotation->quotationDate,
+                'SaleMaster_customer_name'       => $data->customer->Customer_Name,
+                'SaleMaster_customer_mobile'     => $data->customer->Customer_Mobile,
+                'SaleMaster_customer_address'    => $data->customer->Customer_Address,
+                'SaleMaster_customerId'          => $data->customer->Customer_Type == 'G' ? null : $data->customer->Customer_SlNo,
+                'SaleMaster_TotalSaleAmount'     => $data->quotation->total,
                 'SaleMaster_TotalDiscountAmount' => $data->quotation->discount,
-                'SaleMaster_TaxAmount' => $data->quotation->vat,
-                'SaleMaster_SubTotalAmount' => $data->quotation->subTotal,
-                'Status' => 'a',
-                "AddBy" => $this->session->userdata("FullName"),
-                'AddTime' => date("Y-m-d H:i:s"),
-                'SaleMaster_branchid' => $this->session->userdata("BRANCHid")
+                'SaleMaster_TaxAmount'           => $data->quotation->vat,
+                'SaleMaster_SubTotalAmount'      => $data->quotation->subTotal,
+                'Status'                         => 'a',
+                "AddBy"                          => $this->session->userdata("FullName"),
+                'AddTime'                        => date("Y-m-d H:i:s"),
+                'SaleMaster_branchid'            => $this->session->userdata("BRANCHid")
             );
     
             $this->db->insert('tbl_quotation_master', $quotation);
@@ -89,19 +90,20 @@ class Quotation extends CI_Controller {
             $quotationId = $data->quotation->quotationId;
 
             $quotation = array(
-                'SaleMaster_InvoiceNo' => $data->quotation->invoiceNo,
-                'SaleMaster_SaleDate' => $data->quotation->quotationDate,
-                'SaleMaster_customer_name' => $data->quotation->customerName,
-                'SaleMaster_customer_mobile' => $data->quotation->customerMobile,
-                'SaleMaster_customer_address' => $data->quotation->customerAddress,
-                'SaleMaster_TotalSaleAmount' => $data->quotation->total,
+                'SaleMaster_InvoiceNo'           => $data->quotation->invoiceNo,
+                'SaleMaster_SaleDate'            => $data->quotation->quotationDate,
+                'SaleMaster_customer_name'       => $data->customer->Customer_Name,
+                'SaleMaster_customer_mobile'     => $data->customer->Customer_Mobile,
+                'SaleMaster_customer_address'    => $data->customer->Customer_Address,
+                'SaleMaster_customerId'          => $data->customer->Customer_Type == 'G' ? null : $data->customer->Customer_SlNo,
+                'SaleMaster_TotalSaleAmount'     => $data->quotation->total,
                 'SaleMaster_TotalDiscountAmount' => $data->quotation->discount,
-                'SaleMaster_TaxAmount' => $data->quotation->vat,
-                'SaleMaster_SubTotalAmount' => $data->quotation->subTotal,
-                'Status' => 'a',
-                "AddBy" => $this->session->userdata("FullName"),
-                'AddTime' => date("Y-m-d H:i:s"),
-                'SaleMaster_branchid' => $this->session->userdata("BRANCHid")
+                'SaleMaster_TaxAmount'           => $data->quotation->vat,
+                'SaleMaster_SubTotalAmount'      => $data->quotation->subTotal,
+                'Status'                         => 'a',
+                "AddBy"                          => $this->session->userdata("FullName"),
+                'AddTime'                        => date("Y-m-d H:i:s"),
+                'SaleMaster_branchid'            => $this->session->userdata("BRANCHid")
             );
     
             $this->db->where('SaleMaster_SlNo', $quotationId)->update('tbl_quotation_master', $quotation);
@@ -169,7 +171,10 @@ class Quotation extends CI_Controller {
         }
 
         $res['quotations'] = $this->db->query("
-            select * from tbl_quotation_master qm 
+            select qm.*,
+            c.*
+            from tbl_quotation_master qm 
+            left join tbl_customer c on c.Customer_SlNo = qm.SaleMaster_customerId
             where qm.Status = 'a'
             and qm.SaleMaster_branchid = ?
             $clauses

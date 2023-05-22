@@ -279,7 +279,7 @@
 												<div class="col-xs-12">
 													<input type="number" id="vatPercent" name="vatPercent" v-model="vatPercent" v-on:input="calculateTotal" style="width:50px;height:25px;" />
 													<span style="width:20px;"> % </span>
-													<input type="number" id="vat" name="vat" v-model="purchase.vat" readonly style="width:140px;height:25px;" />
+													<input type="number" id="vat" name="vat" v-model="purchase.vat" readonly style="width:120px;height:25px;" />
 												</div>
 											</div>
 										</td>
